@@ -26,7 +26,7 @@ private:
    double *z, // вектор координат z
        *t,    // вектор координат t
        *a,    // текущая амплитуда
-       *kpd,  // текущий КПД
+       *eff,  // текущий КПД
        **th, **dth, *ymin, *ymax, xmin_val, *xmin = &xmin_val, *xmax, *xmin_eta = &xmin_val,
                                             *xmax_eta;
    int nz,                                      // число точек по z
@@ -34,6 +34,9 @@ private:
        ne, *it, phase_space, draw_trajectories; // текущая точка времени
    QValueAxis *xAxis, *xAxis_eta;               // Ось X
    QValueAxis *yAxis, *yAxis_eta;               // Ось Y
+   double h, L, hth, delta, Ar, Ai;
+   int Ne;
+   QString sAr, sNth, sdelta, sL, sh;
 
 public:
    explicit Widgetui(Rkn *, QWidget *parent = nullptr);
@@ -44,6 +47,10 @@ private:
 
 private slots:
    void updateUI();
+
+   void on_pushButton_PAUSE_clicked();
+
+   void on_pushButton_EXIT_clicked();
 
 private:
    void connectSignals();
@@ -60,6 +67,8 @@ private:
    QList<QLineSeries *> series_eta;
    QList<QChartView *> m_charts;
    Rkn *r;
+   int pause;
+   QWidget *p;
 
 public slots:
    void paintGraph();

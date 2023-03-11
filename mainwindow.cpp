@@ -13,7 +13,7 @@ extern QMutex mx;
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
    r = new Rkn();
-   widget = new Widgetui(r);
+   widget = new Widgetui(r, this);
    thread = new QThread();
    pause = 0;
 
@@ -82,6 +82,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
       //      int *it = r->getit();
       double **th = r->get_theta();
       double **dth = r->get_dtheta();
+      double *eff = r->get_eff();
       //      QString result, dir_a = dir, dir_k = dir;
       QString result;
       QTextStream ts(&result);
@@ -101,6 +102,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
                //               QTextStream(&result) << dth[i][j] << "\t\t";
                ts << dth[i][j] << ' ';
             //            QTextStream(&result) << '\n';
+            ts << eff[i] << ' ';
             ts << '\n';
          }
          file_tr.write(result.toUtf8());

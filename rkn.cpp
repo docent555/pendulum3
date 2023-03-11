@@ -67,6 +67,7 @@ Rkn::Rkn(QObject *parent) : QObject(parent), ic(0.0, 1.0)
    }
    F0 = new double[Ne];
    z = new double[NZ];
+   eff = new double[NZ];
 
    //========================================================================================//
    //						   / Массивы для A(z), th(z,th0), dthdz(z,th0)
@@ -143,7 +144,8 @@ void Rkn::calculate()
    //						   / Начальные условия
    //========================================================================================//
 
-   for (int i = 0; i < NZ - 1; i++) {     
+   for (int i = 0; i < NZ - 1; i++) {
+      eff[i + 1] = 0.0;
       for (int k = 0; k < Ne; k++) {
          F0[k] = F(th[i][k]);
 
@@ -165,7 +167,13 @@ void Rkn::calculate()
             dthmin = dthdz[i + 1][k];
          if (dthdz[i + 1][k] > dthmax)
             dthmax = dthdz[i + 1][k];
+
+         eff[i + 1] = eff[i + 1] + (dthdz[i + 1][k] - delta);
       }
+
+      eff[i + 1] = eff[i + 1] / double(Ne);
+
+      //      qDebug() << z[i] << eff[i];
 
       it = i + 1;
       emit paintSignal();
