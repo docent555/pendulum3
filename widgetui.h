@@ -28,7 +28,7 @@ private:
        *a,    // текущая амплитуда
        *eff,  // текущий КПД
        **th, **dth, *ymin, *ymax, xmin_val, *xmin = &xmin_val, *xmax, *xmin_eta = &xmin_val,
-                                            *xmax_eta;
+                                            *xmax_eta, *ymin_eta, *ymax_eta;
    int nz,                                      // число точек по z
        nt,                                      // число точек по времени
        ne, *it, phase_space, draw_trajectories; // текущая точка времени

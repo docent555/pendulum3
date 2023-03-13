@@ -26,7 +26,8 @@ class Rkn : public QObject
    int NZ, Ne, phase_space, draw_trajectories;
    int it; // текущий момент времени
    complex<double> *A0, *A1, *J0, *Az0, *AzL;
-   double **th, **dthdz, *eff, thmin = 1000, thmax = -1000, dthmin = 1000, dthmax = -1000;
+   double **th, **dthdz, *eff, thmin = 1000, thmax = -1000, dthmin = 1000, dthmax = -1000,
+                               effmin = 1000, effmax = -1000;
    double *F0;
    double *z;
    QString *dir;
@@ -51,6 +52,8 @@ public:
    double *get_thmax() { return &thmax; }
    double *get_dthmin() { return &dthmin; }
    double *get_dthmax() { return &dthmax; }
+   double *get_etamin() { return &effmin; }
+   double *get_etamax() { return &effmax; }
    double *get_eff() { return eff; }
    int get_phase_space() { return phase_space; }
    int get_draw_trajectories() { return draw_trajectories; }

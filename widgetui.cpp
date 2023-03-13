@@ -71,6 +71,8 @@ Widgetui::Widgetui(Rkn *r, QWidget *parent)
       ui->psView->setMinimumSize(min);
       ui->psView->setMaximumSize(max);
 
+      ymin_eta = r->get_etamin();
+      ymax_eta = r->get_etamax();
       xmin_eta = r->get_thmin();
       xmax_eta = r->get_thmax();
       chart_eff = new QChart();
@@ -93,6 +95,8 @@ Widgetui::Widgetui(Rkn *r, QWidget *parent)
       ui->psView->setMinimumSize(min);
       ui->psView->setMaximumSize(max);
 
+      ymin_eta = r->get_etamin();
+      ymax_eta = r->get_etamax();
       xmin_eta = r->get_thmin();
       xmax_eta = r->get_thmax();
       chart_eff = new QChart();
@@ -260,7 +264,7 @@ QChart *Widgetui::createLineChart_eta()
    qDebug() << "Ссоздание серии для КПД";
 
    yAxis_eta = new QValueAxis; // Ось Y
-   yAxis_eta->setRange(-0.3, 1.3);
+   yAxis_eta->setRange(-0.2, 1.2);
    //   yAxis_eta->setTitleText(tr("КПД")); // Название оси Y
    //    yAxis_eta->setTitleBrush(Qt::black); // Цвет названия
    //    yAxis_eta->setLabelsColor(Qt::black); // Цвет элементов оси
@@ -307,7 +311,8 @@ void Widgetui::paintGraph()
    QColor green(Qt::green);
 
    if (phase_space == 0) {
-      yAxis->setRange((*ymin) - 0.2, (*ymax) + 0.2);      
+      yAxis->setRange((*ymin) - 0.2, (*ymax) + 0.2);
+      yAxis_eta->setRange((*ymin_eta) - 0.1, (*ymax_eta + 0.1));
 
       for (int i = 0; i < ne; i++) {
          if (draw_trajectories == 0)
@@ -325,6 +330,7 @@ void Widgetui::paintGraph()
    } else {
       xAxis->setRange((*xmin) - 0.2, (*xmax) + 0.2);
       yAxis->setRange((*ymin) - 0.2, (*ymax) + 0.2);
+      yAxis_eta->setRange((*ymin_eta) - 0.1, (*ymax_eta + 0.1));
 
       for (int i = 0; i < ne; i++) {
          if (draw_trajectories == 0)

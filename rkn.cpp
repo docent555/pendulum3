@@ -173,6 +173,11 @@ void Rkn::calculate()
 
       eff[i + 1] = eff[i + 1] / double(Ne);
 
+      if (eff[i + 1] < effmin)
+         effmin = eff[i + 1];
+      if (eff[i + 1] > effmax)
+         effmax = eff[i + 1];
+
       //      qDebug() << z[i] << eff[i];
 
       it = i + 1;
