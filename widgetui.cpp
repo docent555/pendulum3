@@ -16,18 +16,18 @@ Widgetui::Widgetui(Rkn *r, QWidget *parent)
 
    parw = parent; // dlya reagirovaniya na knopku <Exit>
 
-   ifstream in("input.dat");
+   ifstream in("input_pendulum.in");
    if (!in) {
-      qDebug() << "Error opening file input.dat";
+      qDebug() << "Error opening file input_pendulum.in";
       exit(1);
    }
 
    //****************************************************************************************//
-   //							 Читаем данные из файла input.dat
+   //							 Читаем данные из файла input_pendulum.in
    //****************************************************************************************//
    in >> h >> L >> Ne >> Ar >> delta >> phase_space >> draw_trajectories;
    //========================================================================================//
-   //						   / Читаем данные из файла input.dat
+   //						   / Читаем данные из файла input_pendulum.in
    //========================================================================================//
 
    sAr = "Параметр ускорения: " + sAr.setNum(Ar);
@@ -248,11 +248,20 @@ QChart *Widgetui::createLineChart_eta()
    QFont font = chart_eta->titleFont();
    font.setPointSize(10);
    chart_eta->setTitleFont(font);
+   QColor color(Qt::red);
+   QPen *pen = new QPen();
+   pen->setWidth(3);
+   pen->setColor(color);
 
-   for (int i = 0; i < ne; i++) {
-      series_eta.append(new QLineSeries());
-      series_eta[i]->setUseOpenGL(true);
-   }
+   //   for (int i = 0; i < ne; i++) {
+   //      series_eta.append(new QLineSeries());
+   //      series_eta[i]->setUseOpenGL(true);
+   //   }
+
+   series_eta.append(new QLineSeries());
+   series_eta[0]->setUseOpenGL(true);
+
+   series_eta[0]->setPen(*pen);
 
    xAxis_eta = new QValueAxis; // Ось X
                                //    xAxis_eta->setRange(0, z[nz - 1]);
@@ -285,13 +294,17 @@ QChart *Widgetui::createLineChart_eta()
    chart_eta->addAxis(xAxis_eta, Qt::AlignBottom);
    chart_eta->addAxis(yAxis_eta, Qt::AlignLeft);
 
-   for (int i = 0; i < ne; ++i) {
-      chart_eta->addSeries(series_eta[i]);
-      //    chart->setAxisX(xAxis_eta, serieskpd); // Назначить ось xAxis_eta, осью X для diagramA
-      series_eta[i]->attachAxis(xAxis_eta);
-      //    chart->setAxisY(yAxis_eta, serieskpd); // Назначить ось yAxis_eta, осью Y для diagramA
-      series_eta[i]->attachAxis(yAxis_eta);
-   }
+   //   for (int i = 0; i < ne; ++i) {
+   //      chart_eta->addSeries(series_eta[i]);
+   //      //    chart->setAxisX(xAxis_eta, serieskpd); // Назначить ось xAxis_eta, осью X для diagramA
+   //      series_eta[i]->attachAxis(xAxis_eta);
+   //      //    chart->setAxisY(yAxis_eta, serieskpd); // Назначить ось yAxis_eta, осью Y для diagramA
+   //      series_eta[i]->attachAxis(yAxis_eta);
+   //   }
+
+   chart_eta->addSeries(series_eta[0]);
+   series_eta[0]->attachAxis(xAxis_eta);
+   series_eta[0]->attachAxis(yAxis_eta);
 
    qDebug() << "Конец создания серии для КПД";
 
@@ -316,10 +329,11 @@ void Widgetui::init_paintGraph()
    static int j;
    j = 0;
    QColor green(Qt::green);
+   QColor red(Qt::cyan);
 
    if (phase_space == 0) {
       yAxis->setRange((*ymin) - 0.2, (*ymax) + 0.2);
-      yAxis_eta->setRange((*ymin_eta) - 0.1, (*ymax_eta + 0.1));
+      //      yAxis_eta->setRange((*ymin_eta) - 0.1, (*ymax_eta + 0.1));
 
       for (int i = 0; i < ne; i++) {
          if (draw_trajectories == 0)
@@ -327,17 +341,17 @@ void Widgetui::init_paintGraph()
          series[i]->setBrush(green);
          series[i]->append(z[j], th[j][i]);
       }
-      for (int i = 0; i < ne; i++) {
-         //         if (draw_trajectories == 0)
-         //            series_eta[i]->clear();
-         series_eta[i]->setBrush(green);
-         series_eta[i]->append(z[j], eff[j]);
-         //         qDebug() << z[j] << eff[j];
-      }
+      //      for (int i = 0; i < ne; i++) {
+      //         //         if (draw_trajectories == 0)
+      //         //            series_eta[i]->clear();
+      //         series_eta[i]->setBrush(green);
+      //         series_eta[i]->append(z[j], eff[j]);
+      //         //         qDebug() << z[j] << eff[j];
+      //      }
    } else {
       xAxis->setRange((*xmin) - 0.2, (*xmax) + 0.2);
       yAxis->setRange((*ymin) - 0.2, (*ymax) + 0.2);
-      yAxis_eta->setRange((*ymin_eta) - 0.1, (*ymax_eta + 0.1));
+      //      yAxis_eta->setRange((*ymin_eta) - 0.1, (*ymax_eta + 0.1));
 
       for (int i = 0; i < ne; i++) {
          if (draw_trajectories == 0)
@@ -345,14 +359,18 @@ void Widgetui::init_paintGraph()
          series[i]->setBrush(green);
          series[i]->append(th[j][i], dth[j][i]);
       }
-      for (int i = 0; i < ne; i++) {
-         //         if (draw_trajectories == 0)
-         //            series_eta[i]->clear();
-         series_eta[i]->setBrush(green);
-         series_eta[i]->append(z[j], eff[j]);
-         //         qDebug() << z[j] << eff[j];
-      }
+      //      for (int i = 0; i < ne; i++) {
+      //         //         if (draw_trajectories == 0)
+      //         //            series_eta[i]->clear();
+      //         series_eta[i]->setBrush(green);
+      //         series_eta[i]->append(z[j], eff[j]);
+      //         //         qDebug() << z[j] << eff[j];
+      //      }
    }
+   yAxis_eta->setRange((*ymin_eta) - 0.1, (*ymax_eta + 0.1));
+   //   series_eta[0]->setBrush(red);
+   //   series_eta[0]->setPen(red);
+   series_eta[0]->append(z[j], eff[j]);
 }
 
 void Widgetui::paintGraph()
@@ -360,10 +378,11 @@ void Widgetui::paintGraph()
    static int j;
    j = *it;
    QColor green(Qt::green);
+   QColor red(Qt::cyan);
 
    if (phase_space == 0) {
       yAxis->setRange((*ymin) - 0.2, (*ymax) + 0.2);
-      yAxis_eta->setRange((*ymin_eta) - 0.1, (*ymax_eta + 0.1));
+      //      yAxis_eta->setRange((*ymin_eta) - 0.1, (*ymax_eta + 0.1));
 
       for (int i = 0; i < ne; i++) {
          if (draw_trajectories == 0)
@@ -371,17 +390,17 @@ void Widgetui::paintGraph()
          series[i]->setBrush(green);
          series[i]->append(z[j], th[j][i]);
       }
-      for (int i = 0; i < ne; i++) {
-         //         if (draw_trajectories == 0)
-         //            series_eta[i]->clear();
-         series_eta[i]->setBrush(green);
-         series_eta[i]->append(z[j], eff[j]);
-         //         qDebug() << z[j] << eff[j];
-      }
+      //      for (int i = 0; i < ne; i++) {
+      //         //         if (draw_trajectories == 0)
+      //         //            series_eta[i]->clear();
+      //         series_eta[i]->setBrush(green);
+      //         series_eta[i]->append(z[j], eff[j]);
+      //         //         qDebug() << z[j] << eff[j];
+      //      }
    } else {
       xAxis->setRange((*xmin) - 0.2, (*xmax) + 0.2);
       yAxis->setRange((*ymin) - 0.2, (*ymax) + 0.2);
-      yAxis_eta->setRange((*ymin_eta) - 0.1, (*ymax_eta + 0.1));
+      //      yAxis_eta->setRange((*ymin_eta) - 0.1, (*ymax_eta + 0.1));
 
       for (int i = 0; i < ne; i++) {
          if (draw_trajectories == 0)
@@ -389,14 +408,18 @@ void Widgetui::paintGraph()
          series[i]->setBrush(green);
          series[i]->append(th[j][i], dth[j][i]);
       }
-      for (int i = 0; i < ne; i++) {
-         //         if (draw_trajectories == 0)
-         //            series_eta[i]->clear();
-         series_eta[i]->setBrush(green);
-         series_eta[i]->append(z[j], eff[j]);
-         //         qDebug() << z[j] << eff[j];
-      }
+      //      for (int i = 0; i < ne; i++) {
+      //         //         if (draw_trajectories == 0)
+      //         //            series_eta[i]->clear();
+      //         series_eta[i]->setBrush(green);
+      //         series_eta[i]->append(z[j], eff[j]);
+      //         //         qDebug() << z[j] << eff[j];
+      //      }
    }
+   yAxis_eta->setRange((*ymin_eta) - 0.1, (*ymax_eta + 0.1));
+   //   series_eta[0]->setBrush(red);
+   //   series_eta[0]->setPen(red);
+   series_eta[0]->append(z[j], eff[j]);
 }
 
 void Widgetui::disable_enable_on_start()

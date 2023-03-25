@@ -102,7 +102,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
       QString fileName = QFileDialog::getSaveFileName(this,
                                                       tr("Save File"),
-                                                      "results.dat",
+                                                      "results_pundulum.dat",
                                                       tr("Data files (*.dat)"));
       double *z = r->getz();
       int ne = r->getNe();

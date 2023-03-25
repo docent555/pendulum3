@@ -11,9 +11,9 @@ Dialog::Dialog(
 
    this->setWindowTitle("Параметры");
 
-   f.open("input.dat", ios::in);
+   f.open("input_pendulum.in", ios::in);
    if (!f) {
-      //        qDebug() << "Error opening file input.dat";
+      //        qDebug() << "Error opening file input_pendulum.in";
       //        exit(1);
       Ar = 1;
       Nth = 8;
@@ -66,9 +66,9 @@ void Dialog::on_pushButton_OK_clicked()
    L = sL.toDouble();
    h = sh.toDouble();
 
-   f.open("input.dat", ios::out);
+   f.open("input_pendulum.in", ios::out);
    if (!f) {
-      qDebug() << "Error opening file input.dat";
+      qDebug() << "Error opening file input_pendulum.in";
       exit(1);
    }
 
