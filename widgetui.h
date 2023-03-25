@@ -41,6 +41,8 @@ private:
 public:
    explicit Widgetui(Rkn *, QWidget *parent = nullptr);
    ~Widgetui();
+   void disable_enable_on_start();
+   void disable_enable_on_stop();
 
 private:
    Ui::Widgetui *ui;
@@ -48,9 +50,18 @@ private:
 private slots:
    void updateUI();
 
-   void on_pushButton_PAUSE_clicked();
+   void on_pushButton_Start_clicked();
 
-   void on_pushButton_EXIT_clicked();
+   void on_pushButton_Exit_clicked();
+
+   void on_pushButton_Restart_clicked();
+
+   void on_pushButton_Stop_clicked();
+
+signals:
+   void start_calc();
+   void pause();
+   void reboot();
 
 private:
    void connectSignals();
@@ -67,8 +78,12 @@ private:
    QList<QLineSeries *> series_eta;
    QList<QChartView *> m_charts;
    Rkn *r;
-   int pause;
-   QWidget *p;
+   //   int pause;
+   QWidget *parw;
+   int first_time = 0;
+
+private:
+   void init_paintGraph();
 
 public slots:
    void paintGraph();

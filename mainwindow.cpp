@@ -1,11 +1,13 @@
 #include "mainwindow.h"
 
+#include <QApplication>
 #include <QCloseEvent>
 #include <QDebug>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QProcess>
 #include <QString>
 
 extern QMutex mx;
@@ -18,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
    pause = 0;
 
    this->setCentralWidget(widget);
-   this->resize(950, 700);
+   this->resize(1020, 700);
 
    // Запуск выполнения метода run будет осуществляться по сигналу запуска от соответствующего потока
    //   connect(thread, &QThread::started, r, &Rkn::calculate);
@@ -31,6 +33,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
    //    // EventLoop для ожидания записи результата
    //    connect(this, SIGNAL(freeEventLoop()), &r->loop, SLOT(quit()));
 
+   //   // Передаём объект r в поток
+   //   r->moveToThread(thread);
+   //   //    r->moveToThread(&thread);
+   //   // Запускаем счет
+   //   r->setStop(false);
+   //   r->setCalculating(true);
+   //   thread->start();
+   //   //    thread.start();
+}
+
+void MainWindow::start_calculating()
+{
    // Передаём объект r в поток
    r->moveToThread(thread);
    //    r->moveToThread(&thread);
@@ -44,15 +58,29 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
    if (event->key() == Qt::Key_Space) {
-      if (pause == 0) {
-         mx.lock();
-         pause++;
-      } else {
-         mx.unlock();
-         pause--;
-      }
+      make_pause();
+      //      if (pause == 0) {
+      //         mx.lock();
+      //         pause++;
+      //      } else {
+      //         mx.unlock();
+      //         pause--;
+      //      }
    } else if (event->key() == Qt::Key_Escape) {
       this->close();
+   }
+}
+
+void MainWindow::make_pause()
+{
+   if (pause == 0) {
+      mx.lock();
+      pause++;
+      widget->disable_enable_on_stop();
+   } else {
+      mx.unlock();
+      pause--;
+      widget->disable_enable_on_start();
    }
 }
 
@@ -136,6 +164,15 @@ void MainWindow::closeEvent(QCloseEvent *event)
       event->accept();
    }
    mx.unlock();
+}
+
+void MainWindow::reboot()
+{
+   QString program = QApplication::applicationFilePath();
+   QStringList arguments = QApplication::arguments();
+   QString workingDirectory = QDir::currentPath();
+   QProcess::startDetached(program, arguments, workingDirectory);
+   QApplication::exit();
 }
 
 MainWindow::~MainWindow() {}

@@ -14,7 +14,7 @@ Widgetui::Widgetui(Rkn *r, QWidget *parent)
 {
    ui->setupUi(this);
 
-   p = parent;
+   parw = parent; // dlya reagirovaniya na knopku <Exit>
 
    ifstream in("input.dat");
    if (!in) {
@@ -73,8 +73,8 @@ Widgetui::Widgetui(Rkn *r, QWidget *parent)
 
       ymin_eta = r->get_etamin();
       ymax_eta = r->get_etamax();
-      xmin_eta = r->get_thmin();
-      xmax_eta = r->get_thmax();
+      //      xmin_eta = r->get_thmin();
+      //      xmax_eta = r->get_thmax();
       chart_eff = new QChart();
       chart_eff = createLineChart_eta();
       ui->effView->setChart(chart_eff);
@@ -97,8 +97,8 @@ Widgetui::Widgetui(Rkn *r, QWidget *parent)
 
       ymin_eta = r->get_etamin();
       ymax_eta = r->get_etamax();
-      xmin_eta = r->get_thmin();
-      xmax_eta = r->get_thmax();
+      //      xmin_eta = r->get_thmin();
+      //      xmax_eta = r->get_thmax();
       chart_eff = new QChart();
       chart_eff = createLineChart_eta();
       ui->effView->setChart(chart_eff);
@@ -119,6 +119,13 @@ Widgetui::Widgetui(Rkn *r, QWidget *parent)
    //   updateUI();
 
    connect(r, SIGNAL(paintSignal()), this, SLOT(paintGraph()), Qt::BlockingQueuedConnection);
+   connect(this, SIGNAL(start_calc()), parw, SLOT(start_calculating()));
+   connect(this, SIGNAL(pause()), parw, SLOT(make_pause()));
+   connect(this, SIGNAL(reboot()), parw, SLOT(reboot()));
+
+   ui->pushButton_Start->setFocus();
+
+   init_paintGraph();
 }
 
 Widgetui::~Widgetui()
@@ -304,6 +311,50 @@ void Widgetui::updateUI()
    }
 }
 
+void Widgetui::init_paintGraph()
+{
+   static int j;
+   j = 0;
+   QColor green(Qt::green);
+
+   if (phase_space == 0) {
+      yAxis->setRange((*ymin) - 0.2, (*ymax) + 0.2);
+      yAxis_eta->setRange((*ymin_eta) - 0.1, (*ymax_eta + 0.1));
+
+      for (int i = 0; i < ne; i++) {
+         if (draw_trajectories == 0)
+            series[i]->clear();
+         series[i]->setBrush(green);
+         series[i]->append(z[j], th[j][i]);
+      }
+      for (int i = 0; i < ne; i++) {
+         //         if (draw_trajectories == 0)
+         //            series_eta[i]->clear();
+         series_eta[i]->setBrush(green);
+         series_eta[i]->append(z[j], eff[j]);
+         //         qDebug() << z[j] << eff[j];
+      }
+   } else {
+      xAxis->setRange((*xmin) - 0.2, (*xmax) + 0.2);
+      yAxis->setRange((*ymin) - 0.2, (*ymax) + 0.2);
+      yAxis_eta->setRange((*ymin_eta) - 0.1, (*ymax_eta + 0.1));
+
+      for (int i = 0; i < ne; i++) {
+         if (draw_trajectories == 0)
+            series[i]->clear();
+         series[i]->setBrush(green);
+         series[i]->append(th[j][i], dth[j][i]);
+      }
+      for (int i = 0; i < ne; i++) {
+         //         if (draw_trajectories == 0)
+         //            series_eta[i]->clear();
+         series_eta[i]->setBrush(green);
+         series_eta[i]->append(z[j], eff[j]);
+         //         qDebug() << z[j] << eff[j];
+      }
+   }
+}
+
 void Widgetui::paintGraph()
 {
    static int j;
@@ -348,18 +399,41 @@ void Widgetui::paintGraph()
    }
 }
 
-void Widgetui::on_pushButton_PAUSE_clicked()
+void Widgetui::disable_enable_on_start()
 {
-   if (pause == 0) {
-      mx.lock();
-      pause++;
+   ui->pushButton_Stop->setEnabled(true);
+   ui->pushButton_Start->setEnabled(false);
+}
+
+void Widgetui::disable_enable_on_stop()
+{
+   ui->pushButton_Stop->setEnabled(false);
+   ui->pushButton_Start->setEnabled(true);
+   ui->pushButton_Start->setFocus();
+}
+
+void Widgetui::on_pushButton_Start_clicked()
+{
+   if (first_time == 0) {
+      emit start_calc();
+      ui->pushButton_Start->setEnabled(false);
+      first_time = 1;
    } else {
-      mx.unlock();
-      pause--;
+      emit pause();
    }
 }
 
-void Widgetui::on_pushButton_EXIT_clicked()
+void Widgetui::on_pushButton_Exit_clicked()
 {
-   p->close();
+   parw->close();
+}
+
+void Widgetui::on_pushButton_Restart_clicked()
+{
+   emit reboot();
+}
+
+void Widgetui::on_pushButton_Stop_clicked()
+{
+   emit pause();
 }

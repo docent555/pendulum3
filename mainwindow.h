@@ -28,6 +28,9 @@ signals:
    //    void freeEventLoop();
 
 public slots:
+   void start_calculating();
+   void make_pause();
+   void reboot();
 };
 
 #endif // MAINWINDOW_H
